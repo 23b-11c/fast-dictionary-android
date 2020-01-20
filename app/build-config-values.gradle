@@ -6,7 +6,6 @@ android {
         qa {
             buildConfigField "String", "BASE_URL", "\"\""
         }
-
         release {
             buildConfigField "String", "BASE_URL", "\"\""
         }
