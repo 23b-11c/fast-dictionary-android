@@ -1,0 +1,14 @@
+android {
+    buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"\""
+        }
+        qa {
+            buildConfigField "String", "BASE_URL", "\"\""
+        }
+
+        release {
+            buildConfigField "String", "BASE_URL", "\"\""
+        }
+    }
+}

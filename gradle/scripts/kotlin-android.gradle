@@ -1,0 +1,19 @@
+// root project 의 kotlin 버전 설정에 의존성이 있습니다.
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-kapt"
+
+kapt {
+    // generateStubs true
+    correctErrorTypes true
+}
+
+android {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
