@@ -95,6 +95,11 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 
+    // Dagger2
+    api 'com.google.dagger:dagger-android:2.25.4'
+    api 'com.google.dagger:dagger-android-support:2.25.4'
+    kapt 'com.google.dagger:dagger-android-processor:2.25.4'
+
     implementation "androidx.arch.core:core-runtime:2.1.0"
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 
