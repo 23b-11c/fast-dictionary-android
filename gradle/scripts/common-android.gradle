@@ -1,0 +1,27 @@
+// 'com.android.application' 또는 'com.android.library' Gradle plugin 을 적용한 이후에 import 해야 올바르게 동작합니다.
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 29
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        debug { }
+        qa { }
+        release { }
+    }
+
+    lintOptions {
+        checkReleaseBuilds true
+        abortOnError false
+        lintConfig file("$project.rootDir/gradle/configurations/lint-common.xml")
+    }
+}
