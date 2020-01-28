@@ -1,7 +1,7 @@
 android {
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "\"\""
+            buildConfigField "String", "BASE_URL", "\"https://www.example.com/\""
         }
         qa {
             buildConfigField "String", "BASE_URL", "\"\""
