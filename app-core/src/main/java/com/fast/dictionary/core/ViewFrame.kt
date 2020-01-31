@@ -1,7 +1,9 @@
 package com.fast.dictionary.core
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.*
 import java.lang.ref.WeakReference
 
@@ -10,8 +12,23 @@ open class ViewFrame(
     private val lifecycle: Lifecycle
 ): LifecycleObserver, LifecycleOwner {
 
-    private val context: Context?
-        get() = weakContentView.get()?.context
+    companion object {
+        fun newInstance(lifecycle: Lifecycle, root: ViewGroup, containerId: Int, layoutId: Int): ViewFrame {
+            val container = root.findViewById<ViewGroup>(containerId)
+            val contentView = LayoutInflater.from(root.context).inflate(layoutId, null)
+            container.addView(contentView)
+            return ViewFrame(contentView, lifecycle)
+        }
+    }
+
+    val context: Context?
+        get() = contentView?.context
+
+    val contentView: View?
+        get() = weakContentView.get()
+
+    val isShowing: Boolean
+        get() = contentView?.visibility == View.VISIBLE
 
     private val weakContentView = WeakReference<View>(contentView)
     private val lifecycleRegistry by lazy {
@@ -19,6 +36,23 @@ open class ViewFrame(
     }
 
     private val frames = hashSetOf<ViewFrame>()
+
+    fun show() {
+        contentView?.visibility = View.VISIBLE
+    }
+
+    fun hide() {
+        contentView?.visibility = View.GONE
+    }
+
+    fun remove() {
+        onLifecyclePause()
+        onLifecycleStop()
+        onLifecycleDestroy()
+
+        val root = contentView?.parent as? ViewGroup
+        root?.removeView(contentView)
+    }
 
     protected fun addFrame(frame: ViewFrame) {
         frames.add(frame)

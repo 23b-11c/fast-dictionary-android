@@ -21,4 +21,5 @@ class CoreActivity: AppCompatActivity() {
         frames.forEach(lifecycle::removeObserver)
         frames.clear()
     }
+
 }
