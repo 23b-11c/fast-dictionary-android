@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">app-data</string>
+    <string name="dictionary">Dictionary</string>
+    <string name="search_input_hint">Search here..</string>
+    <string name="recent">Recent</string>
+    <string name="definitions">Definitions</string>
+    <string name="synonyms">Synonyms</string>
+    <string name="antonyms">Antonyms</string>
+    <string name="etymology">Etymology</string>
 </resources>
