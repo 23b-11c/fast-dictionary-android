@@ -68,7 +68,7 @@ dependencies {
     api 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
 
     // Android Architecture Components
-    def lifecycle_version = "2.2.0-rc02"
+    def lifecycle_version = "2.2.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
