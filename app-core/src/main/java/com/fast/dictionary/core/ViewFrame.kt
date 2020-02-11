@@ -102,7 +102,4 @@ open class ViewFrame(
 
         weakContentView.clear()
     }
-
-
-
 }

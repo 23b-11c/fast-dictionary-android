@@ -2,7 +2,7 @@ package com.fast.dictionary.core
 
 import androidx.appcompat.app.AppCompatActivity
 
-class CoreActivity: AppCompatActivity() {
+open class CoreActivity: AppCompatActivity() {
 
     private val frames = hashSetOf<ViewFrame>()
 
