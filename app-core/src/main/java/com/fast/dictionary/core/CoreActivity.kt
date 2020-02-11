@@ -9,15 +9,27 @@ open class CoreActivity: AppCompatActivity() {
         ViewFrameStore(this)
     }
 
-    protected inline fun <reified T: ViewFrame> CoreActivity.replace(@IdRes containerId: Int) = lazy {
+    protected val lazyStore: MutableSet<Pair<Lazy<ViewFrame>, Boolean>> = mutableSetOf()
+
+    override fun setContentView(layoutResID: Int) {
+        super.setContentView(layoutResID)
+        lazyStore.forEach { (lazy, showOnCreate) ->
+            when (showOnCreate) {
+                true -> lazy.value.show()
+                false -> lazy.value.hide()
+            }
+
+        }
+    }
+
+    protected inline fun <reified T: ViewFrame> CoreActivity.replace(@IdRes containerId: Int, showOnCreate: Boolean = true) = lazy {
         val modelClass = T::class.java
         return@lazy modelClass.newInstance().apply {
             replace(containerId, this)
         }
-    }
+    }.apply { lazyStore.add(this to showOnCreate) }
 
-
-    protected fun replace(@IdRes containerId: Int, frame: ViewFrame) {
+    fun replace(@IdRes containerId: Int, frame: ViewFrame) {
         frameStore.replace(containerId, frame)
     }
 

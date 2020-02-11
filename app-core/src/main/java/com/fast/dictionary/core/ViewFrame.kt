@@ -15,11 +15,10 @@ abstract class ViewFrame: LifecycleObserver {
     val context: Context?
         get() = weakContentView?.get()?.context
 
-
     val isShowing: Boolean
         get() = weakContentView?.get()?.visibility == View.VISIBLE
 
-    private val weakContentView: WeakReference<View>? = null
+    private var weakContentView: WeakReference<View>? = null
 
     private var containerId: Int = 0
 
@@ -30,12 +29,13 @@ abstract class ViewFrame: LifecycleObserver {
     internal fun attach(activity: AppCompatActivity, containerId: Int) {
         this.containerId = containerId
 
-        val contentView = LayoutInflater.from(context).inflate(layoutResId, null)
         val containerView = activity.findViewById<ViewGroup>(containerId)
-        containerView.addView(contentView)
+        LayoutInflater.from(activity).inflate(layoutResId, containerView, true).apply {
+            weakContentView = WeakReference(this)
+            onAttached(this)
+        }
 
         activity.lifecycle.addObserver(this)
-        onAttached(contentView)
     }
 
     internal fun detach(activity: AppCompatActivity) {
@@ -47,7 +47,7 @@ abstract class ViewFrame: LifecycleObserver {
         onLifecycleStop()
         onLifecycleDestroy()
 
-        weakContentView.clear()
+        weakContentView?.clear()
         onDetached()
     }
 
