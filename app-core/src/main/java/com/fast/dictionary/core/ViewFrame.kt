@@ -79,10 +79,7 @@ abstract class ViewFrame: LifecycleObserver {
     protected open fun onLifecycleStop() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    protected open fun onLifecycleDestroy() {
-        weakContentView?.clear()
-    }
-
+    protected open fun onLifecycleDestroy() {}
 
 
 }
