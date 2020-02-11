@@ -1,25 +1,36 @@
 package com.fast.dictionary.core
 
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 
-class CoreActivity: AppCompatActivity() {
+open class CoreActivity: AppCompatActivity() {
 
-    private val frames = hashSetOf<ViewFrame>()
-
-    protected fun addFrame(frame: ViewFrame) {
-        frames.add(frame)
-        lifecycle.addObserver(frame)
+    private val frameStore: ViewFrameStore by lazy {
+        ViewFrameStore(this)
     }
 
-    protected fun removeFrame(frame: ViewFrame) {
-        lifecycle.removeObserver(frame)
-        frames.remove(frame)
+    protected inline fun <reified T: ViewFrame> CoreActivity.replace(@IdRes containerId: Int) = lazy {
+        val modelClass = T::class.java
+        return@lazy modelClass.newInstance().apply {
+            replace(containerId, this)
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        frames.forEach(lifecycle::removeObserver)
-        frames.clear()
+
+    protected fun replace(@IdRes containerId: Int, frame: ViewFrame) {
+        frameStore.replace(containerId, frame)
+    }
+
+    protected fun add(@IdRes containerId: Int, frame: ViewFrame) {
+        frameStore.add(containerId, frame)
+    }
+
+    protected fun remove(frame: ViewFrame) {
+        frameStore.remove(frame)
+    }
+
+    protected fun findFrameByContainerId(@IdRes containerId: Int): List<ViewFrame> {
+        return frameStore.findFrameByContainerId(containerId)
     }
 
 }
