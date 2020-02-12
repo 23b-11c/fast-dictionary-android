@@ -8,15 +8,14 @@ import androidx.lifecycle.Lifecycle
 import com.fast.dictionary.core.ViewFrame
 import com.fast.dictionary.extensions.showToast
 
-class MainFrame(
-    contentView: View,
-    lifecycle: Lifecycle
-) : ViewFrame(contentView, lifecycle) {
+class MainFrame: ViewFrame() {
 
-    override fun onLifecycleCreate() {
-        super.onLifecycleCreate()
-        contentView?.findViewById<EditText>(R.id.search)
-            ?.setOnEditorActionListener { v, actionId, event ->
+    override val layoutResId: Int = R.layout.layout_main
+
+    override fun onAttached(contentView: View) {
+        super.onAttached(contentView)
+        contentView.findViewById<EditText>(R.id.search)
+            .setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_DONE
                     || event.action == KeyEvent.ACTION_DOWN

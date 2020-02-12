@@ -4,102 +4,82 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import java.lang.ref.WeakReference
 
-open class ViewFrame(
-    contentView: View,
-    private val lifecycle: Lifecycle
-): LifecycleObserver, LifecycleOwner {
+abstract class ViewFrame: LifecycleObserver {
 
-    companion object {
-        fun newInstance(lifecycle: Lifecycle, root: ViewGroup, containerId: Int, layoutId: Int): ViewFrame {
-            val container = root.findViewById<ViewGroup>(containerId)
-            val contentView = LayoutInflater.from(root.context).inflate(layoutId, null)
-            container.addView(contentView)
-            return ViewFrame(contentView, lifecycle)
-        }
-    }
+    abstract val layoutResId: Int
 
     val context: Context?
-        get() = contentView?.context
-
-    val contentView: View?
-        get() = weakContentView.get()
+        get() = weakContentView?.get()?.context
 
     val isShowing: Boolean
-        get() = contentView?.visibility == View.VISIBLE
+        get() = weakContentView?.get()?.visibility == View.VISIBLE
 
-    private val weakContentView = WeakReference<View>(contentView)
-    private val lifecycleRegistry by lazy {
-        LifecycleRegistry(this@ViewFrame)
+    private var weakContentView: WeakReference<View>? = null
+
+    private var containerId: Int = 0
+
+    internal fun getContainerId(): Int {
+        return containerId
     }
 
-    private val frames = hashSetOf<ViewFrame>()
+    internal fun attach(activity: AppCompatActivity, containerId: Int) {
+        this.containerId = containerId
 
-    fun show() {
-        contentView?.visibility = View.VISIBLE
+        val containerView = activity.findViewById<ViewGroup>(containerId)
+        LayoutInflater.from(activity).inflate(layoutResId, containerView, true).apply {
+            weakContentView = WeakReference(this)
+            onAttached(this)
+        }
+
+        activity.lifecycle.addObserver(this)
     }
 
-    fun hide() {
-        contentView?.visibility = View.GONE
-    }
+    internal fun detach(activity: AppCompatActivity) {
+        val containerView = activity.findViewById<ViewGroup?>(containerId) ?: return
+        val contentView = weakContentView?.get() ?: return
+        containerView.removeView(contentView)
 
-    fun remove() {
         onLifecyclePause()
         onLifecycleStop()
         onLifecycleDestroy()
 
-        val root = contentView?.parent as? ViewGroup
-        root?.removeView(contentView)
+        weakContentView?.clear()
+        onDetached()
     }
 
-    protected fun addFrame(frame: ViewFrame) {
-        frames.add(frame)
-        lifecycle.addObserver(frame)
+    protected open fun onAttached(contentView: View) {}
+
+    protected open fun onDetached() {}
+
+    fun show() {
+        weakContentView?.get()?.visibility = View.VISIBLE
     }
 
-    protected fun removeFrame(frame: ViewFrame) {
-        lifecycle.removeObserver(frame)
-        frames.remove(frame)
-    }
-
-    override fun getLifecycle(): Lifecycle {
-        return lifecycle
+    fun hide() {
+        weakContentView?.get()?.visibility = View.GONE
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    protected open fun onLifecycleCreate() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    }
+    protected open fun onLifecycleCreate() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    protected open fun onLifecycleStart() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
-    }
+    protected open fun onLifecycleStart() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    protected open fun onLifecycleResume() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    }
+    protected open fun onLifecycleResume() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    protected open fun onLifecyclePause() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    }
+    protected open fun onLifecyclePause() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    protected open fun onLifecycleStop() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
-    }
+    protected open fun onLifecycleStop() {}
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    protected open fun onLifecycleDestroy() {
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    protected open fun onLifecycleDestroy() {}
 
-        frames.forEach(lifecycle::removeObserver)
-        frames.clear()
 
-        weakContentView.clear()
-    }
 }
