@@ -1,0 +1,3 @@
+apply plugin: 'com.android.library'
+apply from: "$project.rootDir/gradle/scripts/common-android.gradle"
+apply from: "$project.rootDir/gradle/scripts/kotlin-android.gradle"

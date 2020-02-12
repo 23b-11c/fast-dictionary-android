@@ -5,6 +5,9 @@ apply from: "$project.rootDir/gradle/scripts/kotlin-android.gradle"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":app-model")
+
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
 

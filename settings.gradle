@@ -1,2 +1,2 @@
-include ':app', ':app-data', ':app-core'
+include ':app', ':app-data', ':app-core', 'app-model'
 rootProject.name='FastDictionary'
