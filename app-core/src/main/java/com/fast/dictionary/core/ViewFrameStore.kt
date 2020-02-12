@@ -1,9 +1,16 @@
 package com.fast.dictionary.core
 
 import androidx.annotation.IdRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import java.lang.ref.WeakReference
 
-internal class ViewFrameStore(activity: CoreActivity) {
+internal class ViewFrameStore(activity: CoreActivity): LifecycleObserver {
+
+    init {
+        activity.lifecycle.addObserver(this)
+    }
 
     private val weakActivity = WeakReference<CoreActivity>(activity)
     private val viewFrames = mutableListOf<ViewFrame>()
@@ -36,5 +43,12 @@ internal class ViewFrameStore(activity: CoreActivity) {
 
     fun frames(): List<ViewFrame> {
         return viewFrames
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onLifecycleDestroyed() {
+        val activity = weakActivity.get() ?: return
+        viewFrames.forEach { it.detach(activity) }
+        viewFrames.clear()
     }
 }
